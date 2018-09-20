@@ -6,10 +6,18 @@ import java.net.URL;
 public class FinalUrl implements Runnable {
     String origUrl;
     OnReceiveUrlListener listener;
+    int timeoutMillis = 5000;
 
     public FinalUrl(String origUrl, OnReceiveUrlListener listener) {
         this.origUrl = origUrl;
         this.listener = listener;
+    }
+
+    public FinalUrl(String origUrl, OnReceiveUrlListener listener, int timeout) {
+        this(origUrl, listener);
+        if (timeout > 0 && timeout < Integer.MAX_VALUE) {
+            this.timeoutMillis = timeout;
+        }
     }
 
     public interface OnReceiveUrlListener {
@@ -28,6 +36,8 @@ public class FinalUrl implements Runnable {
             do {
                 HttpURLConnection connection = (HttpURLConnection) url.openConnection();
                 connection.setInstanceFollowRedirects(false);
+                connection.setConnectTimeout(timeoutMillis);
+                connection.setReadTimeout(timeoutMillis);
                 connection.setUseCaches(false);
                 connection.connect();
                 responseCode = connection.getResponseCode();
@@ -52,8 +62,8 @@ public class FinalUrl implements Runnable {
                     }
                 }
             } while (responseCode == 301 || responseCode == 302); // 301和302都是重定向
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (Throwable t) {
+            t.printStackTrace();
         }
         String finalUrl = originUrl;
         if (redirectUrl != null && redirectUrl.length() > 0) {
