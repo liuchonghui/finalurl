@@ -38,6 +38,8 @@ public class FinalUrl implements Runnable {
                 connection.setInstanceFollowRedirects(false);
                 connection.setConnectTimeout(timeoutMillis);
                 connection.setReadTimeout(timeoutMillis);
+                // 下面理论上应该写，理由源自RFC2616协议：https://www.w3.org/Protocols/rfc2616/rfc2616-sec9.html#sec9.4
+                // connection.setRequestMethod("HEAD"); // 但是许多国内服务器都不支持，比如优酷
                 connection.setUseCaches(false);
                 connection.connect();
                 responseCode = connection.getResponseCode();
