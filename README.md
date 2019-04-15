@@ -1,4 +1,4 @@
 # finalurl
 ```
-compile 'tools.android:finalurl:1.0.2'
+compile 'tools.android:finalurl:2.0.0'
 ```
